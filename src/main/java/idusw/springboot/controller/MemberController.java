@@ -19,6 +19,18 @@ public class MemberController {
         this.memberService = memberService;
     }
     HttpSession session = null;
+
+    @GetMapping("/list")
+    public String listMember2(Model model) {
+        List<Member> result = null;
+        if((result = memberService.readList()) != null) {
+            model.addAttribute("list", result);
+            return "/members/list2"; // view : template engine - thymeleaf .html
+        }
+        else
+            return "/errors/404";
+    }
+
     @GetMapping("/login-form")
     public String getLoginform(Model model) {
         model.addAttribute("member", Member.builder().build()); // email / pw 전달을 위한 객체
