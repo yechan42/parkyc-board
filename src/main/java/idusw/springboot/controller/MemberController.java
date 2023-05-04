@@ -1,6 +1,9 @@
 package idusw.springboot.controller;
 
 import idusw.springboot.domain.Member;
+import idusw.springboot.domain.PageRequestDTO;
+import idusw.springboot.domain.PageResultDTO;
+import idusw.springboot.entity.MemberEntity;
 import idusw.springboot.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -30,7 +33,6 @@ public class MemberController {
         else
             return "/errors/404";
     }
-
     @GetMapping("/login-form")
     public String getLoginform(Model model) {
         model.addAttribute("member", Member.builder().build()); // email / pw 전달을 위한 객체
@@ -52,6 +54,7 @@ public class MemberController {
         session.invalidate();
         return "redirect:/";
     }
+
     @GetMapping(value = {"", "/"})
     public String listMember(Model model) {
         List<Member> result = null;
@@ -62,6 +65,19 @@ public class MemberController {
         else
             return "/errors/404";
     }
+    @GetMapping(value = {"/pn/{pn}"})
+    public String listMemberByPageNumber(@PathVariable("pn") int pn, Model model) {
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(pn).size(10).build();
+        PageResultDTO<Member, MemberEntity> resultDTO = memberService.getList(pageRequestDTO);
+        List<Member> result = resultDTO.getDtoList();
+        if(result != null) {
+            model.addAttribute("list", result);
+            return "/members/list";
+        }
+        else
+            return "/errors/404";
+    }
+
     @GetMapping("/register-form")
     public String getRegisterForm(Model model) { // form 요청 -> view (template engine)
         model.addAttribute("member", Member.builder().build());
@@ -86,7 +102,7 @@ public class MemberController {
         return "/members/detail";
     }
 
-    @PutMapping("/{seq}")
+    @PutMapping("/{seq}") // @PostMapping("/{seq}/update")
     public String updateMember(@ModelAttribute("member") Member member, Model model) { // 수정 처리 -> service -> repository -> service -> controller
         if(memberService.update(member) > 0 ) {
             session.setAttribute("mb", member);
@@ -95,7 +111,7 @@ public class MemberController {
         else
             return "/errors/404";
     }
-    @DeleteMapping("/{seq}")
+    @DeleteMapping("/{seq}") // @PostMapping("/{seq}/delete")
     public String deleteMember(@ModelAttribute("member") Member member) { // 삭제 처리 -> service -> repository -> service -> controller
         if(memberService.delete(member) > 0) {
             session.invalidate();

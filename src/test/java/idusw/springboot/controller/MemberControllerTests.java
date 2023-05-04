@@ -1,6 +1,8 @@
 package idusw.springboot.controller;
 
 import idusw.springboot.domain.Member;
+import idusw.springboot.domain.PageRequestDTO;
+import idusw.springboot.domain.PageResultDTO;
 import idusw.springboot.entity.MemberEntity;
 import idusw.springboot.repository.MemberRepository;
 import idusw.springboot.service.MemberService;
@@ -50,7 +52,7 @@ public class MemberControllerTests {
         IntStream.rangeClosed(1, 33).forEach(i -> {
             MemberEntity member = MemberEntity.builder()
                     .seq(Long.valueOf(i))
-                    .email("e" + i + "@induk.ac.kr") // 200412045 -> 04045
+                    .email("a" + i + "@induk.ac.kr") // 200412045 -> 04045
                     .pw("pw" + i)
                     .name("name" + i)
                     .build();
@@ -70,5 +72,14 @@ public class MemberControllerTests {
         else
             System.out.println("등록 실패");
     }
+
+    @Test
+    public void testPageList() {
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(2).size(5).build();
+        PageResultDTO<Member, MemberEntity> resultDTO = memberService.getList(pageRequestDTO);
+        for(Member member : resultDTO.getDtoList())
+            System.out.println(member);
+    }
+
 
 }

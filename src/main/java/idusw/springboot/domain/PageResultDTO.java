@@ -13,10 +13,10 @@ public class PageResultDTO<DTO, EN> {
 
     private int totalPage; // 총 페이지 번호
     private int curPage; // 현재 페이지 번호
-    private int size;
+    private int size; // 한 페이지 게시물 갯수
 
-    private int start, end; // 시작 페이지 번호, 끝 페이지 번호
-    private boolean prev, next;
+    private int start, end; // 시작 페이지 번호, 끝 페이지 번호 : 게시물
+    private boolean prev, next; // 버튼 표시
 
     private List<Integer> pageList; // 페이지 번호 목록
 
