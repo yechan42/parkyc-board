@@ -13,5 +13,12 @@
     </li>
 </ul>
 <a th:href="@{/static}"> go home</a><br/>
+
+<ul>
+    <li th:each="page : ${result.pageList}">
+        <a href="#" th:href="@{''}">[[${page}]]</a>
+    </li>
+
+</ul>
 </body>
 </html>

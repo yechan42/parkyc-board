@@ -6,6 +6,7 @@ import idusw.springboot.domain.PageResultDTO;
 import idusw.springboot.entity.MemberEntity;
 import idusw.springboot.repository.MemberRepository;
 import idusw.springboot.service.MemberService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -49,10 +50,10 @@ public class MemberControllerTests {
     @Test
     void initializeMember() {
         // Integer 데이터 흐름, Lambda 식 - 함수형 언어의 특징을 활용
-        IntStream.rangeClosed(1, 33).forEach(i -> {
+        IntStream.rangeClosed(1, 101).forEach(i -> {
             MemberEntity member = MemberEntity.builder()
                     .seq(Long.valueOf(i))
-                    .email("a" + i + "@induk.ac.kr") // 200412045 -> 04045
+                    .email("ab" + i + "@induk.ac.kr") // 200412045 -> 04045
                     .pw("pw" + i)
                     .name("name" + i)
                     .build();
@@ -75,11 +76,20 @@ public class MemberControllerTests {
 
     @Test
     public void testPageList() {
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(2).size(5).build();
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(5).size(10).build();
         PageResultDTO<Member, MemberEntity> resultDTO = memberService.getList(pageRequestDTO);
+        // print records in page
         for(Member member : resultDTO.getDtoList())
             System.out.println(member);
+        /**
+         * boolean prev은 lombok으로 generation할 때  getter는 isPrev(), setter 는 setPrev()
+         * int totalPage 인 경우 getter는 getTotalPage(), setter setTotalPage()
+         *
+         * @Data == @Getter @Setter @RequiredArgsConstructor @ToString @EqualsAndHashCode.
+         */
+        System.out.println("Prev : " + resultDTO.isPrev()); //  PerPagination = 4인경, 1 - 4, 5 - 8, 9 - 12
+        System.out.println("Next : " + resultDTO.isNext());
+        System.out.println("Total Page : " + resultDTO.getTotalPage());
+        resultDTO.getPageList().forEach(i -> System.out.println(i));
     }
-
-
 }
