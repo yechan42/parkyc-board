@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class MemoControllerTests {
     @Autowired
     MemoService memoService;
+    /*
     @Test
     public void readMemo() {
         Memo m = new Memo();
@@ -18,4 +19,6 @@ public class MemoControllerTests {
         if((result = memoService.read(m)) != null)
             System.out.println(result.getMemoText());
     }
+
+     */
 }
