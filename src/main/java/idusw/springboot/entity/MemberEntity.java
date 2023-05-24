@@ -16,7 +16,7 @@ import lombok.*;
         initialValue = 1, allocationSize = 1)
 public class MemberEntity extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ab_member202112055_seq_gen")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "b_member202112055_seq_gen")
     // Oracle : GenerationType.SEQUENCE, Mysql/MariaDB : GenerationType.IDENTITY, auto_increment
     private Long seq;
 
