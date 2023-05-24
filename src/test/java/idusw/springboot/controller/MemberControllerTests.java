@@ -74,9 +74,11 @@ public class MemberControllerTests {
             System.out.println("등록 실패");
     }
 
+
+
     @Test
     public void testPageList() {
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(5).size(10).build();
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(5).perPage(10).build();
         PageResultDTO<Member, MemberEntity> resultDTO = memberService.getList(pageRequestDTO);
         // print records in page
         for(Member member : resultDTO.getDtoList())
