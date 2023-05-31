@@ -1,6 +1,15 @@
 package idusw.springboot.domain;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
+
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 
 public class Board {
     private Long bno; // 유일성있음
