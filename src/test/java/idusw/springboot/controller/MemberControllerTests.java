@@ -53,7 +53,7 @@ public class MemberControllerTests {
         IntStream.rangeClosed(1, 101).forEach(i -> {
             MemberEntity member = MemberEntity.builder()
                     .seq(Long.valueOf(i))
-                    .email("ab" + i + "@induk.ac.kr") // 200412045 -> 04045
+                    .email("ab" + i + "@induk.ac.kr") //
                     .pw("pw" + i)
                     .name("name" + i)
                     .build();
@@ -64,9 +64,9 @@ public class MemberControllerTests {
     @Test
     void createMember() {
         Member member = Member.builder()
-                .email("13@13.com")
-                .name("13")
-                .pw("13")
+                .email("123@123.com")
+                .name("12")
+                .pw("123")
                 .build();
         if(memberService.create(member) > 0 ) // 정상적으로 레코드의 변화가 발생하는 경우 영향받는 레코드 수를 반환
             System.out.println("등록 성공");
