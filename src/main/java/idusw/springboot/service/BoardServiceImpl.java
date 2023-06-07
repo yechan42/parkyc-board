@@ -6,6 +6,8 @@ import idusw.springboot.domain.PageResultDTO;
 import idusw.springboot.entity.BoardEntity;
 import idusw.springboot.entity.MemberEntity;
 import idusw.springboot.repository.BoardRepository;
+import idusw.springboot.repository.ReplyRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,12 +16,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Function;
 
+@RequiredArgsConstructor
 @Service
 public class BoardServiceImpl implements BoardService {
     private BoardRepository boardRepository;
-    public BoardServiceImpl(BoardRepository boardRepository){
-        this.boardRepository = boardRepository;
-    }
+    private ReplyRepository replyRepository;
+
 
     @Override
     public int registerBoard(Board board) {
@@ -58,6 +60,8 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public int deleteBoard(Board board) {
+        replyRepository.deleteByBno(board.getBno()); //댓글 삭제
+        boardRepository.deleteById(board.getBno()); //게시물 삭제
         return 0;
     }
 }
