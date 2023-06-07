@@ -3,7 +3,6 @@ package idusw.springboot.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,6 +21,7 @@ public class PageRequestDTO {
     public PageRequestDTO() {
         this.page = 1;
         this.perPage = 10;
+        this.perPagination = 5;
     }
     public Pageable getPageable(Sort sort) {
         return PageRequest.of(page - 1, perPage, sort);
