@@ -19,8 +19,8 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 @Service
 public class BoardServiceImpl implements BoardService {
-    private BoardRepository boardRepository;
-    private ReplyRepository replyRepository;
+    private final BoardRepository boardRepository;
+    private final ReplyRepository replyRepository;
 
 
     @Override
@@ -28,10 +28,11 @@ public class BoardServiceImpl implements BoardService {
 
         BoardEntity entity = dtoToEntity(board);
 
-        if(boardRepository.save(entity) != null) // 저장 성공
+        if (boardRepository.save(entity) != null) { // 저장 성공
             return 1;
-        else
+        } else {
             return 0;
+        }
     }
 
     @Override
