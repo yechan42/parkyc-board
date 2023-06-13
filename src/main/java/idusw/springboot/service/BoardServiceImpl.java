@@ -65,4 +65,6 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.deleteById(board.getBno()); //게시물 삭제
         return 0;
     }
+
+
 }

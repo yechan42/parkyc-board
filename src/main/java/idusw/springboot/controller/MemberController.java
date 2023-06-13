@@ -29,7 +29,7 @@ public class MemberController {
     */
     @GetMapping(value ={"", "/"} ) // ?page=&perPage=
     public String listMemberPagination(@RequestParam(value="page", required = false, defaultValue = "1") int page,
-                                       @RequestParam(value="per-page", required = false, defaultValue = "10") int perPage,
+                                       @RequestParam(value="per-page", required = false, defaultValue = "8") int perPage,
                                        @RequestParam(value="per-pagination", required = false, defaultValue ="5") int perPagination,
                                        @RequestParam(value="type", required = false, defaultValue ="e") String type,
                                        @RequestParam(value="keyword", required = false, defaultValue ="@") String keyword,
@@ -84,17 +84,18 @@ public class MemberController {
 
  */
 
-    @GetMapping("/register-form")
+    @GetMapping("/reg-form")
     public String getRegisterForm(Model model) { // form 요청 -> view (template engine)
         model.addAttribute("member", Member.builder().build());
         return "/members/register";
     }
     @PostMapping("/")
     public String createMember(@ModelAttribute("member") Member member, Model model) { // 등록 처리 -> service -> repository -> service -> controller
-        if(memberService.create(member) > 0 ) // 정상적으로 레코드의 변화가 발생하는 경우 영향받는 레코드 수를 반환
+        if (memberService.create(member) > 0) {// 정상적으로 레코드의 변화가 발생하는 경우 영향받는 레코드 수를 반환
             return "redirect:/";
-        else
-            return "/errors/404";
+    }else{
+            return "/errors/404";}
+
     }
     @GetMapping("/{seq}")
     public String getMember(@PathVariable("seq") Long seq, Model model) {

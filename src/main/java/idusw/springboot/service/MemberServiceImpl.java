@@ -20,10 +20,10 @@ import java.util.function.Function;
 
 @Service
 public class MemberServiceImpl implements MemberService {
-    // DI - IoC (Inversion of Control : 제어의 역전) 방법 중 하나, DI, DL ...
-    //
-    MemberRepository memberRepository;
-    public MemberServiceImpl(MemberRepository memberRepository) { // Spring Framework이 주입(하도록 요청함)
+
+    private final MemberRepository memberRepository;
+
+    public MemberServiceImpl(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
@@ -35,16 +35,17 @@ public class MemberServiceImpl implements MemberService {
                 .name(m.getName())
                 .pw(m.getPw())
                 .build();
-        if(memberRepository.save(entity) != null) // 저장 성공
+        if (memberRepository.save(entity) != null) {
             return 1;
-        else
+        } else {
             return 0;
+        }
     }
 
     @Override
     public Member read(Member m) {
-        MemberEntity e = memberRepository.getById(m.getSeq()); // JpaRepository 구현체의 메소드
-        Member result = new Member(); // DTO (Data Transfer Object) : Controller - Service or Controller - View
+        MemberEntity e = memberRepository.getById(m.getSeq());
+        Member result = new Member();
         System.out.println(e);
         result.setSeq(e.getSeq());
         result.setEmail(e.getEmail());
@@ -54,21 +55,18 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public List<Member> readList() {
-        List<MemberEntity> entities = new ArrayList<>();
-        List<Member> members = null;
-        if((entities = memberRepository.findAll()) != null) {
-            members = new ArrayList<>();
-            for(MemberEntity e : entities) {
-                Member m = Member.builder()
-                        .seq(e.getSeq())
-                        .email(e.getEmail())
-                        .name(e.getName())
-                        .pw(e.getPw())
-                        .regDate(e.getRegDate())
-                        .modDate(e.getModDate())
-                        .build();
-                members.add(m);
-            }
+        List<MemberEntity> entities = memberRepository.findAll();
+        List<Member> members = new ArrayList<>();
+        for (MemberEntity e : entities) {
+            Member m = Member.builder()
+                    .seq(e.getSeq())
+                    .email(e.getEmail())
+                    .name(e.getName())
+                    .pw(e.getPw())
+                    .regDate(e.getRegDate())
+                    .modDate(e.getModDate())
+                    .build();
+            members.add(m);
         }
         return members;
     }
@@ -81,10 +79,11 @@ public class MemberServiceImpl implements MemberService {
                 .name(m.getName())
                 .pw(m.getPw())
                 .build();
-        if(memberRepository.save(entity) != null) // 저장 성공
+        if (memberRepository.save(entity) != null) {
             return 1;
-        else
+        } else {
             return 0;
+        }
     }
 
     @Override
@@ -98,83 +97,54 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member login(Member m) {
-        MemberEntity e = memberRepository.getByEmailPw(m.getEmail(), m.getPw()); // JpaRepository 구현체의 메소드
-        System.out.println("login : " + e);
-        Member result = null; // DTO (Data Transfer Object) : Controller - Service or Controller - View
-        if(e != null) {
-            result = new Member();
-            result.setSeq(e.getSeq());
-            result.setEmail(e.getEmail());
-            result.setName(e.getName());
+        MemberEntity e = memberRepository.getByEmailPw(m.getEmail(), m.getPw());
+        System.out.println("login: " + e);
+        if (e != null) {
+            return Member.builder()
+                    .seq(e.getSeq())
+                    .email(e.getEmail())
+                    .name(e.getName())
+                    .build();
         }
-        return result;
+        return null;
     }
 
     @Override
     public PageResultDTO<Member, MemberEntity> getList(PageRequestDTO requestDTO) {
         Sort sort = Sort.by("seq").descending();
-        /*
-        if(requestDTO.getSort() == null)
-            sort = Sort.by("seq").descending();
-        else
-            sort = Sort.by("seq").ascending();
-
-         */
         Pageable pageable = requestDTO.getPageable(sort);
-        //Page<MemberEntity> result = memberRepository.findAll(pageable);
-
-        BooleanBuilder booleanBuilder =  findByCondition(requestDTO);
+        BooleanBuilder booleanBuilder = findByCondition(requestDTO);
         Page<MemberEntity> result = memberRepository.findAll(booleanBuilder, pageable);
-
-        Function<MemberEntity, Member> fn = (entity -> entityToDto(entity));
-
-        PageResultDTO pageResultDTO = new PageResultDTO<>(result, fn, requestDTO.getPerPagination());
-
-        return pageResultDTO;
+        Function<MemberEntity, Member> fn = this::entityToDto;
+        return new PageResultDTO<>(result, fn, requestDTO.getPerPagination());
     }
 
     private BooleanBuilder findByCondition(PageRequestDTO pageRequestDTO) {
-
         String type = pageRequestDTO.getType();
-
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-
         QMemberEntity qMemberEntity = QMemberEntity.memberEntity;
-
-        BooleanExpression expression = qMemberEntity.seq.gt(0L); // where seq > 0 and title == "title"
-        booleanBuilder.and(expression);
-
-        if(type == null || type.trim().length() == 0) {
+        booleanBuilder.and(qMemberEntity.seq.gt(0L));
+        if (type == null || type.trim().length() == 0) {
             return booleanBuilder;
         }
-
         String keyword = pageRequestDTO.getKeyword();
-
         System.out.println("findByCondition " + type + " : " + keyword);
-
         BooleanBuilder conditionBuilder = new BooleanBuilder();
-        // select * from member where
-        // seq > 0 and email=keyword or name = keyword
-        // select * from member where seq > 0 and email=keyword or name = keyword
-        if(type.contains("e")) { // email로 검색
+        if (type.contains("e")) {
             conditionBuilder.or(qMemberEntity.email.contains(keyword));
         }
-        if(type.contains("n")) { // email로 검색
+        if (type.contains("n")) {
             conditionBuilder.or(qMemberEntity.name.contains(keyword));
         }
-        /*
-        if(type.contains("p")) { // phone로 검색
-            conditionBuilder.or(qMemberEntity.phone.contains(keyword));
-        }
-        if(type.contains("a")) { // address로 검색
-            conditionBuilder.or(qMemberEntity.address.contains(keyword));
-        } // 조건을 전부 줄 수도 있으니 if else문 아님
-        if(type.contains("l")) {
-            conditionBuilder.or(qMemberEntity.level.contains(keyword));
-        }
-         */
         booleanBuilder.and(conditionBuilder);
         return booleanBuilder;
     }
 
+    public Member entityToDto(MemberEntity entity) {
+        return Member.builder()
+                .seq(entity.getSeq())
+                .email(entity.getEmail())
+                .name(entity.getName())
+                .build();
+    }
 }

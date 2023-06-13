@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 
 @Builder
 @AllArgsConstructor
-@Data // == @Getter @Setter @RequiredArgsConstructor @ToString @EqualsAndHashCode
+@Data
 public class PageRequestDTO {
     private int page; // 요청하는 페이지
     private int perPage; // 페이지당 게시물 수
@@ -20,10 +20,13 @@ public class PageRequestDTO {
 
     public PageRequestDTO() {
         this.page = 1;
-        this.perPage = 10;
+        this.perPage = 8;
         this.perPagination = 5;
     }
+
     public Pageable getPageable(Sort sort) {
         return PageRequest.of(page - 1, perPage, sort);
     }
+
+
 }
