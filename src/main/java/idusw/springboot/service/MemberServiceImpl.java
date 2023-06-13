@@ -94,6 +94,14 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.deleteById(entity.getSeq());
         return 1;
     }
+    @Override
+    public int checkEmail(Member m) {
+        List<MemberEntity> memberEntityList = memberRepository.getMemberEntitiesByEmail(m.getEmail());
+        if(memberEntityList.size() > 0)
+            return 1; // 중복
+        else
+            return 0; // 사용가능
+    }
 
     @Override
     public Member login(Member m) {

@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>idusw - Register</title>
+    <title>JSJ - Register</title>
 
     <!-- Custom fonts for this template-->
     <div th:replace="~{/main/main-fragment :: header}"></div>
@@ -30,14 +30,39 @@
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                         </div>
-                        <form class="user" th:action="@{/members/}" th:object="${member}" th:method="post">
+                        <script>
+                            function checkEmail(){
+                                var email = $('#exampleInputEmail').val();
+                                $.ajax({
+                                    url:'/members/check-email',
+                                    type:'post',
+                                    data:{email:email},
+                                    success:function (cnt){
+                                        if(cnt == 0){
+                                            $('.email_ok').css("display","inline-block");
+                                            $('.email_already').css("display","none");
+                                        }else{
+                                            $('.email_already').css("display","inline-block");
+                                            $('.email_ok').css("display","none");
+
+                                        }
+                                    },
+                                    error:function(){
+                                        alert("에러입니다");
+                                    }
+                                });
+                            };
+                        </script>
+                        <form class="user" th:action="@{'/members/'}" th:object="${member}" th:method="post">
                             <div class="form-group row">
-                                <input type="text" name="name" th:field="*{name}" class="form-control form-control-user" id="exampleFirstName"
-                                       placeholder=" Name">
-                            </div>
-                            <div class="form-group">
-                                <input type="email" name="email" th:field="*{email}" class="form-control form-control-user" id="exampleInputEmail"
-                                       placeholder="Email Address">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="email" name="email" th:field="*{email}" class="form-control form-control-user" id="exampleInputEmail"
+                                           placeholder="Email Address" oninput="checkEmail()"><!-- ajax로 처리-->
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="email_ok">ok : 사용가능</span>
+                                    <span class="email_already"> cheak : 사용 불가능</span>
+                                </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
@@ -48,6 +73,10 @@
                                     <input type="password" class="form-control form-control-user"
                                            id="exampleRepeatPassword" placeholder="Repeat Password">
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" name="name" th:field="*{name}" class="form-control form-control-user" id="exampleFirstName"
+                                       placeholder=" Name">
                             </div>
                             <input type="submit" value="Register Account" class="btn btn-primary btn-user btn-block">
                             <hr>
@@ -63,7 +92,7 @@
                             <a class="small" href="forgot-password.html">Forgot Password?</a>
                         </div>
                         <div class="text-center">
-                            <a class="small" href="login.html">Already have an account? Login!</a>
+                            <a class="small" th:href="@{'../members/login-form'}">Already have an account? Login!</a>
                         </div>
                     </div>
                 </div>
